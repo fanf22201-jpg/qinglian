@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#05050A" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="轻练 · 极简健身营养管理 PWA：食物热量查询、饮食与运动记录、每日热量目标与可视化。">
+<title>轻练 · 健身营养管理</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 极光背景光球 -->
+<div class="aurora" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- ============ 登录 / 注册 ============ -->
+<div id="auth-view" class="auth-wrap view hidden">
+  <div class="card auth-card fade-in-up">
+    <div class="auth-logo"><span class="logo-badge">轻</span></div>
+    <h1 class="auth-title">轻练</h1>
+    <p class="auth-sub">极简健身营养管理 · 数据只存在你的设备上</p>
+
+    <div class="seg" role="tablist">
+      <button type="button" class="seg-btn active" data-auth-tab="login">登录</button>
+      <button type="button" class="seg-btn" data-auth-tab="register">注册</button>
+    </div>
+
+    <form id="auth-form" novalidate>
+      <div id="auth-login-fields">
+        <label class="label" for="login-username">用户名</label>
+        <input id="login-username" class="input" autocomplete="username" placeholder="请输入用户名">
+        <label class="label" for="login-password">密码</label>
+        <input id="login-password" type="password" class="input" autocomplete="current-password" placeholder="请输入密码">
+      </div>
+      <div id="auth-register-fields" class="hidden">
+        <label class="label" for="reg-username">用户名</label>
+        <input id="reg-username" class="input" autocomplete="username" placeholder="设置用户名（需唯一）">
+        <label class="label" for="reg-password">密码</label>
+        <input id="reg-password" type="password" class="input" autocomplete="new-password" placeholder="至少 6 位">
+        <label class="label" for="reg-password2">确认密码</label>
+        <input id="reg-password2" type="password" class="input" autocomplete="new-password" placeholder="再次输入密码">
+        <div class="reg-divider"><span>身体资料</span></div>
+        <label class="label" for="reg-name">昵称</label>
+        <input id="reg-name" class="input" placeholder="将作为你的首个档案名称">
+        <label class="label">性别</label>
+        <div class="seg" id="reg-gender-seg">
+          <button type="button" class="seg-btn active" data-reg-gender="male">♂ 男</button>
+          <button type="button" class="seg-btn" data-reg-gender="female">♀ 女</button>
+        </div>
+        <div class="form-grid">
+          <div>
+            <label class="label" for="reg-age">年龄 <span class="opt">选填</span></label>
+            <input id="reg-age" class="input" type="number" inputmode="numeric" placeholder="默认 25">
+          </div>
+          <div>
+            <label class="label" for="reg-height">身高 cm</label>
+            <input id="reg-height" class="input" type="number" inputmode="decimal" placeholder="如 175">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div>
+            <label class="label" for="reg-weight">体重 kg</label>
+            <input id="reg-weight" class="input" type="number" inputmode="decimal" placeholder="如 70">
+          </div>
+          <div>
+            <label class="label" for="reg-bmr">基础代谢 <span class="opt">选填</span></label>
+            <input id="reg-bmr" class="input" type="number" inputmode="decimal" placeholder="如有真实数据请填写">
+          </div>
+        </div>
+        <p class="hint-sm reg-hint">基础代谢（BMR）为实测静息代谢值，留空将按 Mifflin-St Jeor 公式自动计算。</p>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="auth-submit">登录</button>
+    </form>
+
+  </div>
+</div>
+
+<!-- ============ 主应用 ============ -->
+<div id="app-view" class="app hidden">
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="app-brand"><span class="logo-badge small">轻</span><strong>轻练</strong></div>
+      <button type="button" id="profile-chip" class="profile-chip" title="切换档案"></button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section id="page-home" class="page"></section>
+    <section id="page-food" class="page hidden"></section>
+    <section id="page-exercise" class="page hidden"></section>
+    <section id="page-me" class="page hidden"></section>
+    <section id="page-charts" class="page hidden"></section>
+    <section id="page-timer" class="page hidden"></section>
+  </main>
+
+  <nav class="tabbar" id="tabbar" aria-label="主导航">
+    <button type="button" class="tab-btn active" data-tab="home"><span class="tab-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span><span>首页</span></button>
+    <button type="button" class="tab-btn" data-tab="food"><span class="tab-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></span><span>饮食</span></button>
+    <button type="button" class="tab-btn" data-tab="exercise"><span class="tab-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg></span><span>运动</span></button>
+    <button type="button" class="tab-btn" data-tab="me"><span class="tab-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span><span>我的</span></button>
+  </nav>
+</div>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script src="lib/chart.umd.min.js" defer></script>
+<script src="js/calc.js" defer></script>
+<script src="js/data.js" defer></script>
+<script src="js/store.js" defer></script>
+<script src="js/ui.js" defer></script>
+<script src="js/charts.js" defer></script>
+<script src="js/app.js" defer></script>
+
+</body>
+</html>
